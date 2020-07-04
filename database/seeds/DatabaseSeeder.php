@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
         ->each( function (\App\Course $c)
         {
             $c->goals()->saveMany(factory(\App\Goal::class, 2))->create();
-            $c->requeriments()->saveMany(factory(\App\Requeriment::class, 4))->create();
+            $c->requirements()->saveMany(factory(\App\Requirement::class, 4))->create();
         });
 
         

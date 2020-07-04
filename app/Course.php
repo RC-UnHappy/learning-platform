@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Requirement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -52,6 +53,42 @@ class Course extends Model
     protected $withCount = ['reviews', 'students'];
     protected $fillable = ['teacher_id', 'name', 'description', 'picture', 'level_id', 'category_id', 'status'];
 
+    public static function boot () {
+		parent::boot();
+
+		static::saving(function(Course $course) {
+			if( ! \App::runningInConsole() ) {
+				$course->slug = str_slug($course->name, "-");
+			}
+		});
+
+		static::saved(function (Course $course) {
+			if ( ! \App::runningInConsole()) {
+				if ( request('requirements')) {
+					foreach (request('requirements') as $key => $requirement_input) {
+						if ($requirement_input) {
+							Requirement::updateOrCreate(['id' => request('requirement_id'. $key)], [
+								'course_id' => $course->id,
+								'requirement' => $requirement_input
+							]);
+						}
+					}
+				}
+
+				if(request('goals')) {
+					foreach(request('goals') as $key => $goal_input) {
+						if( $goal_input) {
+							Goal::updateOrCreate(['id' => request('goal_id'.$key)], [
+								'course_id' => $course->id,
+								'goal' => $goal_input
+							]);
+						}
+					}
+				}
+			}
+		});
+	}
+
     public function category()
     {
         return $this->belongsTo(Category::class)->select('id', 'name');
@@ -76,9 +113,9 @@ class Course extends Model
         return $this->hasMany(Review::class)->select('id', 'user_id', 'course_id', 'rating', 'comment', 'created_at');
     }
 
-    public function requeriments()
+    public function requirements()
     {
-        return $this->hasMany(Requeriment::class)->select('id', 'course_id', 'requeriment');
+        return $this->hasMany(Requirement::class)->select('id', 'course_id', 'requirement');
     }
 
     public function students()

@@ -70,7 +70,7 @@
                             <label for="category_id" class="col-md-4 col-form-label text-md-right">{{ __("Categoría del curso") }}</label>
                             <div class="col-md-6">
                                 <select name="category_id" id="category_id" class="form-control">
-                                    @foreach(\App\Category::groupBy('name')->pluck('name', 'id') as $id => $category)
+                                    @foreach(\App\Category::groupBy('name', 'id')->pluck('name', 'id') as $id => $category)
                                         <option {{ (int) old('category_id') === $id || $course->category_id === $id ? 'selected' : '' }} value="{{ $id }}">
                                             {{ $category }}
                                         </option>

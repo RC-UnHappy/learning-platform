@@ -7,7 +7,7 @@
     <div class="col-6">
       <div class="card bg-light p-3">
         <p class="mb-0">
-          {{ $requirement->requeriment }}  
+          {{ $requirement->requirement }}  
         </p> 
       </div>
     </div>
